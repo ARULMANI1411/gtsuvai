@@ -21,7 +21,7 @@ class _SplashState extends State<Splash> {
         height:MediaQuery.of(context).size.height,
         width: double.infinity,
         decoration: BoxDecoration(
-          image: DecorationImage(image: AssetImage("assets/img/gif gtsuvai.gif"),fit: BoxFit.fill),
+          image: DecorationImage(image: AssetImage("assets/img/green.gif"),fit: BoxFit.fill),
         ),
       ),
       nextScreen:  home(),

@@ -66,6 +66,8 @@ class _homeeditState extends State<homeedit> {
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {return[
             SliverAppBar(
+              pinned: true,
+
               toolbarHeight: 135,
               centerTitle: false,
               title: Padding(
