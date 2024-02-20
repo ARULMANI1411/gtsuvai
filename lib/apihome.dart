@@ -22,6 +22,7 @@ import 'SearchResultsPage.dart';
 import 'apiSearch.dart';
 import 'models/apiSearch.dart';
 import 'models/eachrestaurant.dart';
+
 import 'models/offer.dart';
 import 'models/restaurant.dart';
 import 'package:location/location.dart';
@@ -38,9 +39,6 @@ class home extends StatefulWidget {
 class _homeState extends State<home> {
 
   TextEditingController searchcontroller=TextEditingController();
-  List<Map<String, dynamic>> searchResults = [];
-  List searchdetails=[];
-
 
   double currentLocationLatitude = 0.0; // Add this line
   double currentLocationLongitude = 0.0; // Add this line
@@ -62,134 +60,80 @@ class _homeState extends State<home> {
       throw 'Could not launch Google Maps';
     }
   }
-  /// to use api
-  ///---------All restaurant api----------///
-  // Future<List<RestaurantDtls>> getRestaurant() async {
-  //   try {
-  //     var resp = await http.get(Uri.parse("http://gtsuvai.gtcollege.in/Master/GetRestaurantDetails"));
-  //
-  //     if (resp.statusCode == 200) {
-  //       var datalist = jsonDecode(resp.body)["restaurantDtls"];
-  //
-  //       if (datalist != null) {
-  //         return (datalist as List).map((e) => RestaurantDtls.fromJson(e)).toList();
-  //       }
-  //     }
-  //   } catch (error) {
-  //     print('Error during API request: $error');
-  //   }
-  //
-  //   return []; // Return an empty list in case of an error or null response
-  // }
-  ///---------NearBy restaurant api----------///
-
-  // Future<List<RestaurantDtls>> getNearbyRestaurants() async {
-  //   try {
-  //     var resp = await http.get(Uri.parse("http://gtsuvai.gtcollege.in/Master/GetRestaurantDetails"));
-  //
-  //     if (resp.statusCode == 200) {
-  //       var datalist = jsonDecode(resp.body)["restaurantDtls"];
-  //
-  //       if (datalist != null) {
-  //         List<RestaurantDtls> allRestaurants = (datalist as List).map((e) => RestaurantDtls.fromJson(e)).toList();
-  //
-  //         print("All restaurants: $allRestaurants");
-  //
-  //         // Filter restaurants by distance
-  //         List<RestaurantDtls> nearbyRestaurants = allRestaurants
-  //             .where((restaurant) {
-  //           if (restaurant.latitude != null && restaurant.longtitude != null) {
-  //             double distance = Geolocator.distanceBetween(
-  //               currentLocationLatitude,
-  //               currentLocationLongitude,
-  //               restaurant.latitude!,
-  //               restaurant.longtitude!,
-  //             );
-  //
-  //             // Adjust the distance threshold as needed (e.g., 2000 meters)
-  //             return distance <= 2000;
-  //           }
-  //           return false;
-  //         })
-  //             .toList()..sort((a, b) {
-  //             double distanceA = Geolocator.distanceBetween(
-  //               currentLocationLatitude,
-  //               currentLocationLongitude,
-  //               a.latitude!,
-  //               a.longtitude!,
-  //             );
-  //
-  //             double distanceB = Geolocator.distanceBetween(
-  //               currentLocationLatitude,
-  //               currentLocationLongitude,
-  //               b.latitude!,
-  //               b.longtitude!,
-  //             );
-  //
-  //             return distanceA.compareTo(distanceB);
-  //           });
-  //
-  //         print("Nearby restaurants (sorted): $nearbyRestaurants");
-  //
-  //         return nearbyRestaurants;
-  //       }
-  //     }
-  //   } catch (error) {
-  //     print('Error during API request: $error');
-  //   }
-  //
-  //   return [];  // Return an empty list in case of an error or null response
-  // }
-
-   List list=[];
-
-           /// text form field
-  // Future<void> getRestarunt(String query) async {
-  //
-  //   searchResults.clear();
-  //   setState(() {
-  //     print(allRestaurants);
-  //     allRestaurants.clear();
-  //     List<RestaurantDtls> filteredRestaurants = searchResults.where((e) =>
-  //     e['restraurantName'].toString().toLowerCase().contains(query.toLowerCase()) ||
-  //         e['categoryName'].toString().toLowerCase().contains(query.toLowerCase()))
-  //         .map((e) => RestaurantDtls.fromJson(e))
-  //         .toList();
-  //     allRestaurants.addAll(filteredRestaurants);
-  //     allRestaurants = allRestaurants.toSet().toList(); // Convert list to a set to remove duplicates, then back to list
-  //     print("Filtered results: $allRestaurants");
-  //   });
-  // }
-
-
 
 
   Future<List<RestaurantDtls>> getNearbyRestaurants() async {
+    print("abcdd");
     try {
-      var resp = await http.post(
-        Uri.parse("http://gtsuvai.gtcollege.in/Master/GetRestaurantDetails"),
-        headers: <String, String>{
-          "Content-Type": "application/json;charset=UTF-8",
-        },
-        body: jsonEncode(<String, dynamic>{
-          "Lat": currentLocationLatitude,
-          "Long": currentLocationLongitude
-        }),
-      );
+      print("abcd");
+      print("$currentLocationLatitude");
+      print(currentLocationLongitude);
+      var resp = await http.post(Uri.parse("http://gtsuvai.gtcollege.in/Master/GetRestaurantDetails"),
+          headers: <String,String>{
+            "Content-Type":"application/json;charset=UTF-8",
+          },
+          body: jsonEncode(<String, dynamic>{
+            "Lat": currentLocationLatitude,
+            "Long": currentLocationLongitude
+          }));
 
       if (resp.statusCode == 200) {
+        print("abcd");
+        print(resp.body);
         var datalist = jsonDecode(resp.body)["restaurantDtls"];
-        if (datalist != null && datalist is List) {
-          List<RestaurantDtls> allRestaurants = datalist
-              .map((json) => RestaurantDtls.fromJson(json))
+        print(datalist.toString() + "restaurant list");
+        if (datalist != null) {
+          List<RestaurantDtls> allRestaurants = (datalist as List)
+              .map((e) => RestaurantDtls.fromJson(e))
               .toList();
-          for (var restaurant in allRestaurants) {
-          print(allRestaurants);
-          }
+
+
+
+          // Filter restaurants by distance
+          // List<RestaurantDtls> nearbyRestaurants = allRestaurants
+          //     .where((restaurant) {
+          //   if (restaurant.latitude != null &&
+          //       restaurant.longtitude != null) {
+          //     double distance = Geolocator.distanceBetween(
+          //       double.parse(currentLocationLatitude as String),
+          //       double.parse(currentLocationLongitude as String),
+          //       restaurant.latitude!,
+          //       restaurant.longtitude!,
+          //
+          //     );
+          //
+          //     // Adjust the distance threshold as needed (e.g., 2000 meters)
+          //     return distance <= 2000;
+          //   }
+          //   return false;
+          // })
+          //     .toList()
+          //   ..sort((a, b) {
+          //     double distanceA = Geolocator.distanceBetween(
+          //       double.parse(currentLocationLatitude as String),
+          //       double.parse(currentLocationLongitude as String),
+          //       a.latitude!,
+          //       a.longtitude!,
+          //     );
+          //
+          //     double distanceB = Geolocator.distanceBetween(
+          //       double.parse(currentLocationLatitude as String),
+          //       double.parse(currentLocationLongitude as String),
+          //       b.latitude!,
+          //       b.longtitude!,
+          //     );
+          //
+          //     return distanceA.compareTo(distanceB);
+          //   });
+          //
+          // print("Nearby restaurants (sorted): $nearbyRestaurants");
+          // return $nearbyRestaurants
           return allRestaurants;
         }
-      } else {
-        print("Error code: ${resp.statusCode}");
+      }
+      else
+      {
+        print("ERror code : $resp.statusCode");
       }
     } catch (error) {
       print('Error during API request: $error');
@@ -197,7 +141,6 @@ class _homeState extends State<home> {
 
     return []; // Return an empty list in case of an error or null response
   }
-
 
 
 
@@ -248,6 +191,73 @@ class _homeState extends State<home> {
   double calculateDistance(double startLatitude, double startLongitude, double endLatitude, double endLongitude) {
     return Geolocator.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude) / 1000.0;
   }
+  ///--------text field-------///
+  List searchResults = [];
+  List searchlist=[];
+
+
+  search (String query) async{
+
+    searchlist.clear();
+    setState(() {
+      searchResults.clear();
+      searchResults.addAll(searchlist.where((e) => e["restaurant_name"].toString().contains(query)||
+
+          e["item_details"].any((item)=>item["item_name"].toString().toLowerCase().contains(query))));
+      searchResults=searchResults.toSet().toList();
+    });
+
+  }
+
+
+  List data=[];
+  ///'''''''''''search
+
+  // void fetchRestaurantData(String keyword) async {
+  //   final url = Uri.parse('http://gtsuvai.gtcollege.in/Master/GetRestaurantDetails');
+  //   final response = await http.post(
+  //     url,
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //     },
+  //     body: jsonEncode(<String, String>{
+  //       'keyword': keyword,
+  //     }),
+  //   );
+  //
+  //   if (response.statusCode == 200) {
+  //     // If the server returns a 200 OK response, parse the JSON response
+  //     // and handle it accordingly.
+  //     List<dynamic> jsonResponse = json.decode(response.body);
+  //     print(jsonResponse); // Print the JSON response for debugging
+  //
+  //     List<RestaurantDtls> restaurantList = [];
+  //
+  //     // Iterate through the jsonResponse and access the data
+  //     for (var jsonData in jsonResponse) {
+  //       var restaurantName = jsonData['restaurantName'];
+  //       var itemName = jsonData['ItemName'];
+  //
+  //       // Assuming you have a RestaurantDetails class
+  //       var restaurantDetails = RestaurantDtls(
+  //         restaurantName: restaurantName,
+  //         itemName: itemName,
+  //       );
+  //       restaurantList.add(restaurantDetails);
+  //     }
+  //
+  //     // Do something with the restaurant data
+  //     print(restaurantList);
+  //   } else {
+  //     // If the server did not return a 200 OK response,
+  //     // throw an exception.
+  //     throw Exception('Failed to load restaurant data');
+  //   }
+  // }
+
+
+
+
 
   @override
   void initState() {
@@ -264,6 +274,7 @@ class _homeState extends State<home> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
 
       body: SizedBox(
@@ -274,6 +285,7 @@ class _homeState extends State<home> {
             SliverAppBar(
               toolbarHeight: 135,
               centerTitle: false,
+              pinned: true,
               title: Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Column(
@@ -286,24 +298,26 @@ class _homeState extends State<home> {
                           fontWeight: FontWeight.bold,color: Colors.black,fontFamily: "Outfit-SemiBold"),),
                     // In the _homeState class
                     Card(
-                      elevation: 20,
+                      elevation: 10,
                       shadowColor: Colors.black,
                       child: Container(
                         height: 45,
-                        width: MediaQuery.of(context).size.width * .9,
+                        width: MediaQuery.of(context).size.width * 0.95,
                         decoration: BoxDecoration(
                           color: Colors.white54,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(5.0),
+                          padding: const EdgeInsets.all(4),
                           child: Center(
                             child: TextField(
-                              onChanged:(values){
-                                //getRestarunt(values);
-                              } ,
+                              onChanged: (value){
+
+                              },
                               controller: searchcontroller,
                               decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder( borderSide: BorderSide(color: Colors.green),borderRadius: BorderRadius.circular(10)),
+                                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.green),borderRadius: BorderRadius.circular(10)),
                                 hintText: 'Search Restaurant ',
                                 suffixIcon: IconButton(
                                   onPressed: () async {
@@ -388,13 +402,14 @@ class _homeState extends State<home> {
                         options: CarouselOptions(
                           height: MediaQuery.of(context).size.height*.21,
                           aspectRatio: 16/9,
+
                           viewportFraction: 0.8,
                           initialPage: 0,
                           enableInfiniteScroll: true,
                           reverse: false,
                           autoPlay: true,
-                          autoPlayInterval: Duration(seconds: 3),
-                          autoPlayAnimationDuration: Duration(milliseconds: 800),
+                          autoPlayInterval: Duration(seconds: 5),
+                          autoPlayAnimationDuration: Duration(milliseconds: 2000),
                           autoPlayCurve: Curves.fastOutSlowIn,
                           enlargeCenterPage: true,
                           scrollDirection: Axis.horizontal,
@@ -433,113 +448,113 @@ class _homeState extends State<home> {
                 ),
 
                 // Budget
-                TextDivider(text: Text("Budget",style: dividertext,),thickness: 1,),
-                SizedBox(height: 5,),
+                // TextDivider(text: Text("Budget",style: dividertext,),thickness: 1,),
+                // SizedBox(height: 5,),
+                //
+                // Container(
+                //   height: 100,
+                //   width: double.infinity,
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(2.0),
+                //     child: ListView.builder(
+                //       scrollDirection: Axis.horizontal,
+                //       itemCount: budgetdetails.length,
+                //       itemBuilder: (BuildContext, index) {
+                //         return Column(
+                //           children: [
+                //             Padding(
+                //               padding: const EdgeInsets.only(right: 15.0,left: 15),
+                //               child: Container(
+                //                 height: 80,
+                //                 width:80 ,
+                //                 decoration: BoxDecoration(
+                //                   ///Removed Shadow
+                //                     // boxShadow: [
+                //                     //   BoxShadow(
+                //                     //       color: gtgreen,
+                //                     //       spreadRadius: 1,
+                //                     //       blurRadius: 3,
+                //                     //       offset: Offset(0, 5)
+                //                     //   )
+                //                     // ],
+                //                     color: Colors.white,
+                //                     shape: BoxShape.circle,
+                //                     image: DecorationImage(image: AssetImage(budgetdetails[index].image),fit: BoxFit.fill)
+                //                 ),
+                //                 child: Center(child: Text(budgetdetails[index].text,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 35,color: Colors.white),)),
+                //
+                //               ),
+                //             ),
+                //
+                //
+                //           ],
+                //         );
+                //       },
+                //     ),
+                //   ),
+                //
+                // ),
+                // TextDivider(text: Text("Explore by Catogories",style: dividertext,),thickness: 1,),
+                // Padding(
+                //   padding: const EdgeInsets.only(top: 5.0,left: 8),
+                //   child: Container(
+                //     height: 112,
+                //     width: double.infinity,
+                //     child: ListView.builder(
+                //       addRepaintBoundaries: false,
+                //       scrollDirection: Axis.horizontal,
+                //       itemCount: cata.length,
+                //       itemBuilder: (BuildContext, index) {
+                //         return Padding(
+                //           padding: const EdgeInsets.only(left: 5,right: 5),
+                //           child: Column(
+                //             children: [
+                //               Container(
+                //                 height: 80,
+                //                 width: 80,
+                //                 decoration: BoxDecoration(
+                //             ///Removed Shadow
+                //                     // boxShadow: [
+                //                     //   BoxShadow(
+                //                     //       color: gtgreen,
+                //                     //       spreadRadius: 1,
+                //                     //       blurRadius: 3,
+                //                     //       offset: Offset(0, 5)
+                //                     //   )
+                //                     // ],
+                //
+                //
+                //                     color: Colors.white,
+                //                     shape: BoxShape.circle,
+                //                     image: DecorationImage(image: AssetImage(cata[index].image),fit: BoxFit.fill)
+                //                 ),
+                //
+                //               ),
+                //               Padding(
+                //                 padding: const EdgeInsets.all(5.0),
+                //                 child: Text(cata[index].text,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14),),
+                //               ),
+                //
+                //             ],
+                //           ),
+                //
+                //         );
+                //       },
+                //     ),
+                //
+                //   ),
+                // ),
 
-                Container(
-                  height: 100,
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: budgetdetails.length,
-                      itemBuilder: (BuildContext, index) {
-                        return Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 15.0,left: 15),
-                              child: Container(
-                                height: 80,
-                                width:80 ,
-                                decoration: BoxDecoration(
-                                  ///Removed Shadow
-                                  // boxShadow: [
-                                  //   BoxShadow(
-                                  //       color: gtgreen,
-                                  //       spreadRadius: 1,
-                                  //       blurRadius: 3,
-                                  //       offset: Offset(0, 5)
-                                  //   )
-                                  // ],
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(image: AssetImage(budgetdetails[index].image),fit: BoxFit.fill)
-                                ),
-                                child: Center(child: Text(budgetdetails[index].text,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 35,color: Colors.white),)),
-
-                              ),
-                            ),
 
 
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-
-                ),
-                TextDivider(text: Text("Explore by Catogories",style: dividertext,),thickness: 1,),
-                Padding(
-                  padding: const EdgeInsets.only(top: 5.0,left: 8),
-                  child: Container(
-                    height: 112,
-                    width: double.infinity,
-                    child: ListView.builder(
-                      addRepaintBoundaries: false,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: cata.length,
-                      itemBuilder: (BuildContext, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 5,right: 5),
-                          child: Column(
-                            children: [
-                              Container(
-                                height: 80,
-                                width: 80,
-                                decoration: BoxDecoration(
-                                  ///Removed Shadow
-                                  // boxShadow: [
-                                  //   BoxShadow(
-                                  //       color: gtgreen,
-                                  //       spreadRadius: 1,
-                                  //       blurRadius: 3,
-                                  //       offset: Offset(0, 5)
-                                  //   )
-                                  // ],
-
-
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(image: AssetImage(cata[index].image),fit: BoxFit.fill)
-                                ),
-
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(cata[index].text,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 14),),
-                              ),
-
-                            ],
-                          ),
-
-                        );
-                      },
-                    ),
-
-                  ),
-                ),
-
-
-
-                TextDivider(text: Text("All Restaurants",style: dividertext,),thickness: 1,),
+                TextDivider(text: Text("Nearby Restaurant",style: dividertext,),thickness: 1,),
 
                 FutureBuilder(
                   future: getNearbyRestaurants(),
                   builder: (context,snapshot) {
                     if(snapshot.hasData){
-                       list = snapshot.data!;
-
+                      List<RestaurantDtls> list = snapshot.data!;
+                      print(list);
 
 
                       return Container(
@@ -561,7 +576,7 @@ class _homeState extends State<home> {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Container(
-                                  height:272,
+                                  height:300,
                                   width: MediaQuery.of(context).size.width*1,
                                   decoration: BoxDecoration(color: Colors.white,
                                     /// --------------------------------------------- Colour of Shadow Changed---------------------------------------------------------------------------------
@@ -590,7 +605,7 @@ class _homeState extends State<home> {
 
                                               },
                                               child: Container(
-                                                  height:180,
+                                                  height:220,
                                                   width: MediaQuery.of(context).size.width*1,
                                                   foregroundDecoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(20),
@@ -613,31 +628,31 @@ class _homeState extends State<home> {
                                                   )
                                               ),
                                             ),
-                                            Positioned(
-                                              left: MediaQuery.of(context).size.height*.015,
-                                              bottom: MediaQuery.of(context).size.height*.015,
-                                              child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Container(alignment: Alignment.center,
-                                                    height: 26,width: 200,
-                                                    child: Text(list[Index].restaurantName.toString(),
-                                                      style: GoogleFonts.openSans(
-                                                          color: Colors.white,
-                                                          fontSize: 22,
-                                                          fontWeight: FontWeight.bold
-                                                      ),),
-                                                  ),
-                                                  // Container(alignment: Alignment.center,
-                                                  //   height: 26,width: 200,
-                                                  //   child: Text(list[Index].type.toString(),
-                                                  //     style: TextStyle(fontFamily: "Outfit-SemiBold",
-                                                  //       color: Colors.white,
-                                                  //       fontSize: 15,
-                                                  //     ),),
-                                                  // ),
-                                                ],
-                                              ),
-                                            ),
+                                            // Positioned(
+                                            //   left: MediaQuery.of(context).size.height*.015,
+                                            //   bottom: MediaQuery.of(context).size.height*.015,
+                                            //   child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            //     children: [
+                                            //       Container(alignment: Alignment.center,
+                                            //         height: 26,width: 200,
+                                            //         child: Text(list[Index].restaurantName.toString(),
+                                            //           style: GoogleFonts.openSans(
+                                            //               color: Colors.white,
+                                            //               fontSize: 22,
+                                            //               fontWeight: FontWeight.bold
+                                            //           ),),
+                                            //       ),
+                                            //       Container(alignment: Alignment.center,
+                                            //         height: 26,width: 200,
+                                            //         child: Text(list[Index].type.toString(),
+                                            //           style: TextStyle(fontFamily: "Outfit-SemiBold",
+                                            //             color: Colors.white,
+                                            //             fontSize: 15,
+                                            //           ),),
+                                            //       ),
+                                            //     ],
+                                            //   ),
+                                            // ),
                                           ]
                                       ),
                                       Padding(
@@ -658,40 +673,28 @@ class _homeState extends State<home> {
                                               child: Row(
                                                 children: [
 
-                                                  Padding(
-                                                    padding: EdgeInsets.only(right: 8.0),
-                                                    child: Container(
-                                                      alignment: Alignment.center,
-                                                      height:MediaQuery.of(context).size.height*.0185,
-                                                      width: MediaQuery.of(context).size.width*.21,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.circular(10),
-                                                        // border: Border.all(color: Colors.yellowAccent,width: 2),
-                                                        color: Colors.green,
-                                                      ),
-                                                      child:
-                                                      RatingBar.builder(
-                                                        glowRadius: 3,
-                                                        initialRating: 3,
-                                                        minRating: 1,
-                                                        direction: Axis.horizontal,
-                                                        allowHalfRating: true,
-                                                        itemCount: 5,
-                                                        itemSize: 15,
-                                                        itemPadding: const EdgeInsets.symmetric(horizontal:0),
-                                                        itemBuilder: (context, _) => const Icon(
-                                                          Icons.star_rate,
-                                                          size:1,
-                                                          color: Colors.amber,
-                                                        ),
-                                                        onRatingUpdate: (rating) {
-                                                          setState(() {
-                                                            star=rating;
-                                                          });
-                                                        },
-                                                      ),
+                                                  RatingBar.builder(
+                                                    glowRadius: 3,
+                                                    initialRating: 3,
+                                                    minRating: 1,
+                                                    direction: Axis.horizontal,
+                                                    allowHalfRating: true,
+                                                    itemCount: 5,
+                                                    itemSize: 15,
+                                                    itemPadding: const EdgeInsets.symmetric(horizontal:0),
+                                                    itemBuilder: (context, _) => const Icon(
+                                                      Icons.star_rate,
+                                                      size:2,
+                                                      color: Colors.amber,
                                                     ),
+                                                    onRatingUpdate: (rating) {
+                                                      setState(() {
+                                                        star=rating;
+                                                      });
+                                                    },
                                                   ),
+
+
                                                   Text(   '${star}'  ,
                                                     //Similar[Index].rating,
                                                     style: GoogleFonts.openSans(
@@ -721,75 +724,31 @@ class _homeState extends State<home> {
                                                     fontFamily: "Outfit-SemiBold",
                                                   ),
                                                 ),
+                                                SizedBox(width:180 ,),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(2.0),
+                                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: (){
+                                                          _launchGoogleMapsDirections( snapshot.data![Index].latitude!.toDouble(),snapshot.data![Index].longtitude!.toDouble()); //
+                                                        },
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.only(right: 10.0),
+                                                          child: Icon(Icons.directions,color:Colors.green,size: 45,),
+                                                        ),
+                                                      )
+
+                                                    ],
+                                                  ),
+                                                )
                                               ],
                                             ),
                                           ],
                                         ),
                                       ),
 
-                                      Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(children: [
-                                              Padding(
-                                                padding: const EdgeInsets.all(5.0),
-                                                child: Text("   Parking",
-                                                  style:TextStyle(fontSize:14,color: Colors.black,fontWeight: FontWeight.bold,fontFamily: "Outfit-SemiBold"),),
-                                              ),
 
-                                              Padding(
-                                                padding: const EdgeInsets.all(5.0),
-                                                child: Container(
-                                                    height: 25,
-                                                    width:45,
-                                                    decoration: BoxDecoration(color: Colors.white,
-                                                        borderRadius: BorderRadius.circular(5),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Colors.black12,
-                                                            spreadRadius: 0.5,
-                                                            blurRadius: 10,
-                                                            offset: const Offset(0, 7),
-                                                          )
-                                                        ]
-                                                    ),
-                                                    child: Center(child: Icon(Icons.directions_car,color:Colors.red,))),
-                                              ),
-
-                                              Padding(
-                                                padding: const EdgeInsets.all(5.0),
-                                                child: Container(
-                                                    height: 25,
-                                                    width:45,
-                                                    decoration: BoxDecoration(color: Colors.white,
-                                                        borderRadius: BorderRadius.circular(5),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: Colors.black12,
-                                                            spreadRadius: 0.5,
-                                                            blurRadius: 10,
-                                                            offset: const Offset(0, 7),
-                                                          )
-                                                        ]
-                                                    ),
-                                                    child: Center(child: Icon(Icons.two_wheeler,color:Colors.green,))),
-                                              ),
-
-                                            ],),
-                                            GestureDetector(
-                                              onTap: (){
-                                                _launchGoogleMapsDirections( snapshot.data![Index].latitude!.toDouble(),snapshot.data![Index].longtitude!.toDouble()); //
-                                              },
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(right: 10.0),
-                                                child: Icon(Icons.directions,color:Colors.green,size: 35,),
-                                              ),
-                                            )
-
-                                          ],
-                                        ),
-                                      )
                                     ],
                                   ),
                                 ),
@@ -831,9 +790,3 @@ class _homeState extends State<home> {
     );
   }
 }
-
-
-
-
-
-

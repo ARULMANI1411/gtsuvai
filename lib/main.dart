@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gtsuvai/pg4.dart';
 import 'package:gtsuvai/splash.dart';
 
+import 'apihome.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:  Splash(),
+      home:  home(),
       debugShowCheckedModeBanner: false,
     );
   }
